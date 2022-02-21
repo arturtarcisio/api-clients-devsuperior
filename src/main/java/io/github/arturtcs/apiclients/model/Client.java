@@ -1,8 +1,11 @@
 package io.github.arturtcs.apiclients.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import org.hibernate.validator.constraints.br.CPF;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.Objects;
@@ -14,12 +17,20 @@ public class Client implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @NotEmpty
     private String name;
+
+    @NotEmpty
     private String cpf;
+
+    @NotNull
     private Double income;
 
-    @JsonFormat(pattern = "dd/MM/yyyy")
+    @NotNull
     private LocalDate birthDate;
+
+    @NotNull
     private Integer children;
 
     public Client() {}

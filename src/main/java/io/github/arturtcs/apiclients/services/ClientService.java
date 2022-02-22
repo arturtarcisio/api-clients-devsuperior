@@ -6,6 +6,8 @@ import io.github.arturtcs.apiclients.repositories.ClientRepository;
 import io.github.arturtcs.apiclients.services.exceptions.AttributeNullOrEntityInvalidException;
 import io.github.arturtcs.apiclients.services.exceptions.ResourceNotFoundException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -63,6 +65,19 @@ public class ClientService {
         return new ClientDTO(updatedClient);
     }
 
+    @Transactional(readOnly = true)
+    public ClientDTO findById(Long id) {
+        var optionalClient = repository.findById(id);
+        var client = optionalClient.orElseThrow(() -> new ResourceNotFoundException("Resource not found"));
+        return new ClientDTO(client);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<ClientDTO> findAllPaged (PageRequest pageRequest) {
+        var list = repository.findAll(pageRequest);
+        return list.map(ClientDTO::new);
+    }
+
     private void validateObject(ClientDTO entity){
         if (entity.getName().equals("") ||
                 entity.getName() == null ||
@@ -74,6 +89,4 @@ public class ClientService {
             throw new AttributeNullOrEntityInvalidException("Every attribute of object must be filled.");
         }
     }
-
-
 }

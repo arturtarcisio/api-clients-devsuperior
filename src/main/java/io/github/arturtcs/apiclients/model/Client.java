@@ -1,13 +1,10 @@
 package io.github.arturtcs.apiclients.model;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import org.hibernate.validator.constraints.br.CPF;
-
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
-import java.time.LocalDate;
+import java.time.Instant;
 import java.util.Objects;
 
 @Entity
@@ -28,14 +25,15 @@ public class Client implements Serializable {
     private Double income;
 
     @NotNull
-    private LocalDate birthDate;
+    @Column(columnDefinition = "TIMESTAMP WITHOUT TIME ZONE")
+    private Instant birthDate;
 
     @NotNull
     private Integer children;
 
     public Client() {}
 
-    public Client(Long id, String name, String cpf, Double income, LocalDate birthDate, Integer children) {
+    public Client(Long id, String name, String cpf, Double income, Instant birthDate, Integer children) {
         this.id = id;
         this.name = name;
         this.cpf = cpf;
@@ -76,11 +74,11 @@ public class Client implements Serializable {
         this.income = income;
     }
 
-    public LocalDate getBirthDate() {
+    public Instant getBirthDate() {
         return birthDate;
     }
 
-    public void setBirthDate(LocalDate birthDate) {
+    public void setBirthDate(Instant birthDate) {
         this.birthDate = birthDate;
     }
 

@@ -4,6 +4,8 @@ import io.github.arturtcs.apiclients.model.Client;
 import io.github.arturtcs.apiclients.model.dto.ClientDTO;
 import io.github.arturtcs.apiclients.repositories.ClientRepository;
 import io.github.arturtcs.apiclients.services.exceptions.AttributeNullOrEntityInvalidException;
+import io.github.arturtcs.apiclients.services.exceptions.ResourceNotFoundException;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -41,6 +43,14 @@ public class ClientService {
         return new ClientDTO(client);
     }
 
+    @Transactional
+    public void delete(Long id) {
+        try {
+            repository.deleteById(id);
+        } catch (EmptyResultDataAccessException ex) {
+            throw new ResourceNotFoundException("The resource you're looking for doesn't exist!");
+        }
+    }
 
 
 }

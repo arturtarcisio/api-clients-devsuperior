@@ -29,4 +29,13 @@ public class ClientResource {
 
         return ResponseEntity.created(uri).body(clientDTO);
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteClient(@PathVariable Long id) {
+        service.delete(id);
+        return ResponseEntity.noContent().build();
+    }
+
+
+
 }

@@ -9,6 +9,8 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityNotFoundException;
+
 @Service
 public class ClientService {
 
@@ -21,15 +23,7 @@ public class ClientService {
     @Transactional
     public ClientDTO save(ClientDTO clientDTO) {
 
-        if (clientDTO.getName().equals("") ||
-            clientDTO.getName() == null ||
-            clientDTO.getCpf().equals("") ||
-            clientDTO.getCpf() == null ||
-            clientDTO.getChildren() == null ||
-            clientDTO.getIncome() == null ||
-            clientDTO.getBirthDate() == null)  {
-            throw new AttributeNullOrEntityInvalidException("Every attribute of object must be filled.");
-        }
+        validateObject(clientDTO);
 
         Client client = new Client();
         client.setChildren(clientDTO.getChildren());
@@ -49,6 +43,35 @@ public class ClientService {
             repository.deleteById(id);
         } catch (EmptyResultDataAccessException ex) {
             throw new ResourceNotFoundException("The resource you're looking for doesn't exist!");
+        }
+    }
+
+    @Transactional
+    public ClientDTO update (Long id, ClientDTO clientDTO) {
+
+        validateObject(clientDTO);
+
+        var optionalClient = repository.findById(id);
+        var client = optionalClient.orElseThrow(() -> new ResourceNotFoundException("Resource not found"));
+        client.setName(clientDTO.getName());
+        client.setIncome(clientDTO.getIncome());
+        client.setCpf(clientDTO.getCpf());
+        client.setBirthDate(clientDTO.getBirthDate());
+        client.setChildren(clientDTO.getChildren());
+
+        var updatedClient = repository.save(client);
+        return new ClientDTO(updatedClient);
+    }
+
+    private void validateObject(ClientDTO entity){
+        if (entity.getName().equals("") ||
+                entity.getName() == null ||
+                entity.getCpf().equals("") ||
+                entity.getCpf() == null ||
+                entity.getChildren() == null ||
+                entity.getIncome() == null ||
+                entity.getBirthDate() == null)  {
+            throw new AttributeNullOrEntityInvalidException("Every attribute of object must be filled.");
         }
     }
 
